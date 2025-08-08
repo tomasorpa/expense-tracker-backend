@@ -1,7 +1,8 @@
-import dbConnect from "../../../utils/dbConnect";
-import Income from "../../../models/Income";
+// /pages/api/expense/download.js
+import dbConnect from "../../utils/dbConnect";
+import Expense from "../../models/Expense";
 import xlsx from "xlsx";
-import { protect } from "../../../utils/protect";
+import { protect } from "../../utils/protect";
 
 export default async function handler(req, res) {
   if (req.method !== "GET")
@@ -13,22 +14,24 @@ export default async function handler(req, res) {
   if (!user) return;
 
   try {
-    const income = await Income.find({ userId: user._id }).sort({ date: -1 });
-    const data = income.map((item) => ({
-      Source: item.source,
+    const expenses = await Expense.find({ userId: user._id }).sort({
+      date: -1,
+    });
+    const data = expenses.map((item) => ({
+      Category: item.category,
       Amount: item.amount,
       Date: item.date.toISOString().split("T")[0],
     }));
 
     const workBook = xlsx.utils.book_new();
     const workSheet = xlsx.utils.json_to_sheet(data);
-    xlsx.utils.book_append_sheet(workBook, workSheet, "Income");
+    xlsx.utils.book_append_sheet(workBook, workSheet, "Expenses");
 
     const buf = xlsx.write(workBook, { type: "buffer", bookType: "xlsx" });
 
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="income_details.xlsx"'
+      'attachment; filename="expense_details.xlsx"'
     );
     res.setHeader(
       "Content-Type",

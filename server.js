@@ -31,10 +31,11 @@ app.use("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  if (!req.path.startsWith("/api")) {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+  }
 });
 app.listen(PORT, () => {
-
   `running on port:${PORT}`;
-  console.log(`running on port:${PORT}`)
+  console.log(`running on port:${PORT}`);
 });
