@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   try {
     await dbConnect();
 
-    const userData =await getUserFromRequest(req);
+    const userData = await getUserFromRequest(req);
     if (!userData || !userData.id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
